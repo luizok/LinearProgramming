@@ -31,7 +31,7 @@ class ProblemFormulation():
         self.max_min = "MAX"
 
     def setTest_2(self):
-        #Optimal = (x1=1.0891, x2=2, x3=1.3069) e Z=2.0594
+        #Optimal = (x1=0.9900, x2=2, x3=1.1881) e Z=1.3267
         self.A = [
             [2, 3, 0],
             [-3, 4, 2.5],
@@ -40,16 +40,16 @@ class ProblemFormulation():
         ]
 
         self.constraints = [
-            " =",
+            "<=",
             "<=",
             " =",
-            " ="
+            ">="
         ]
 
         self.b = [
             10,
             8,
-            8,
+            7.8,
             2
         ]
 
