@@ -60,4 +60,4 @@ def toCanonicalForm(p: ProblemFormulation):
                 elif j == n+idx:
                     canonical.A[idx][j] = 1 if canonical.constraints[idx] == "<=" else -1
 
-    canonical.printProblem()
+    return canonical
