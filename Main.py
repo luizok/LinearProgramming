@@ -4,9 +4,10 @@ from Simplex import simplexSolver
 
 if __name__ == "__main__":
     p = ProblemFormulation()
-    p.setTest_1()
+    p.setTest_2()
     print("PROBLEM:")
     p.printProblem()
 
     print("\n\nCANONICAL:")
-    simplexSolver(toCanonicalForm(p))
+    p = toCanonicalForm(p)
+    simplexSolver(p)

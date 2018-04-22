@@ -1,7 +1,7 @@
 from Problem import ProblemFormulation
-from pprint import pprint
+from Simplex import simplexSolver
 
-# Substitute equals constraints for 2 cosntraints of type "<=" and ">="
+# Substitute equals constraints for 2 constraints of type "<=" and ">="
 def removeEqualsConstraints(mapConsts: dict, p: ProblemFormulation, oldProblem: ProblemFormulation):
 
     for i, ix in mapConsts.items():
@@ -17,6 +17,28 @@ def removeEqualsConstraints(mapConsts: dict, p: ProblemFormulation, oldProblem: 
 
     return p
 
+def generateBasicSolution(p: ProblemFormulation, n, m):
+    
+    artVars = [] # Set of Artificial Variables
+
+    for j in range(m):
+        if p.A[j][n+j] == -1:
+            artVars.append(j)
+
+            for i in range(m):
+                p.A[i] = p.A[i] + [1 if i == j else 0]
+
+    p.max_min = "MIN"
+    p.c = [1 if j >= n+m else 0 for j in range(n+m+len(artVars))]
+    p.printProblem()
+    p.c = [c-sum(p.A[artVars[k]][j] for k in range(len(artVars))) for j, c in enumerate(p.c)]
+
+    print()
+    p.printProblem()
+
+    p = simplexSolver(p)
+
+    return p
 
 def toCanonicalForm(p: ProblemFormulation):
     n = len(p.c) # Number of variables
@@ -38,7 +60,7 @@ def toCanonicalForm(p: ProblemFormulation):
     # The next step maps the old constraints to a new enumeration considering
     # "=" constraints as 2 constraints, for example:
     # Consider the constraints [<=, =, >=] mapConsts will give {0:(0,), 1:(1,2), 2:(3,)}
-    # Note that "=" constraint represents 2, since "=" is equivalent to "<=" and ">="
+    # Note that "=" constraint represents 2 values, since "=" is equivalent to "<=" and ">="
     # at the same time
     k = 0
     mapConsts = {}
@@ -59,5 +81,8 @@ def toCanonicalForm(p: ProblemFormulation):
                     canonical.A[idx][j] = p.A[oldRow][j]
                 elif j == n+idx:
                     canonical.A[idx][j] = 1 if canonical.constraints[idx] == "<=" else -1
+
+    if ">=" in canonical.constraints:
+        canonical = generateBasicSolution(canonical, n, m+eqConsts)
 
     return canonical

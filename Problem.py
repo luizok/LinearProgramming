@@ -56,15 +56,54 @@ class ProblemFormulation():
         self.c = [5, -3, 2]
         self.max_min = "MAX"
 
+    def setTest_3(self):
+        #Optimal = (x1=4, x2=1)
+        self.A = [
+            [1,1],
+            [1,0],
+            [0,1],
+            [1,0],
+            [0,1],
+            [1,4]
+        ]
+
+        self.constraints = [
+            ">=",
+            ">=",
+            ">=",
+            "<=",
+            "<=",
+            "<="
+        ]
+
+        self.b = [
+            2,
+            1,
+            1,
+            3,
+            2.5,
+            8
+        ]
+
+        self.c = [2,2]
+        self.max_min = "MAX"
+
     def printProblem(self):
         sign = lambda x: "+" if x > 0 else ""
 
         # Generates a list from i-th line of matrix A
         # output be like: ["+Ai0.x1", "+Ai1.x2", "+... , "+Ain-1.xn"]
+        # generateString = lambda Ai: [
+        #     sign(Ai[j]) + "{:4.2f}".format(float(Ai[j]))+" x"+str(j+1) if Ai[j] != 0 \
+        #     else 8*" "
+        #     for j in range(len(Ai))     
+        # ]
+
         generateString = lambda Ai: [
-            sign(Ai[j]) + "{:4.2f}".format(float(Ai[j]))+" x"+str(j+1) if Ai[j] != 0 \
-            else 8*" "
-            for j in range(len(Ai))     
+            "%s%4.2f x%02d" % (sign(Ai[j]), float(Ai[j]), j+1) \
+            if Ai[j] != 0
+            else 9*" "
+            for j in range(len(Ai))
         ]
         
         print("%s\t%s" % (self.max_min, " ".join(generateString(self.c))))
