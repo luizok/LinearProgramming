@@ -1,13 +1,13 @@
-from Problem import ProblemFormulation
+from Problem import ProblemFormulation, printInfo
 from PreProcess import toCanonicalForm
 from Simplex import simplexSolver
 
 if __name__ == "__main__":
     p = ProblemFormulation()
     p.setTest_2()
-    print("PROBLEM:")
-    p.printProblem()
+    printInfo(p, "PROBLEM")
 
-    print("\n\nCANONICAL:")
     p = toCanonicalForm(p)
-    simplexSolver(p)
+    p = simplexSolver(p)
+
+    printInfo(p, "SOLVED PROBLEM")

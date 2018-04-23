@@ -1,3 +1,10 @@
+
+def printInfo(p, text, size=145):
+    print("\n\n" + 145*"-")
+    print(text.center(size, "-"))
+    print(145*"-")
+    p.printProblem()
+
 class ProblemFormulation():
     def __init__(self, A=[], constraints=[], b=[], c=[], max_min="MIN"):
         self.A = A
@@ -57,7 +64,7 @@ class ProblemFormulation():
         self.max_min = "MAX"
 
     def setTest_3(self):
-        #Optimal = (x1=4, x2=1)
+        #Optimal = (x1=1, x2=1)
         self.A = [
             [1,1],
             [1,0],
@@ -86,6 +93,36 @@ class ProblemFormulation():
         ]
 
         self.c = [2,2]
+        self.max_min = "MAX"
+
+    def setTest_4(self):
+        # Optimal = (x1=1, x2=1.5)
+        self.A = [
+            [1,0],
+            [1,0],
+            [0,1],
+            [0,1],
+            [1,1]
+        ]
+
+        self.constraints = [
+            ">=",
+            "<=",
+            "<=",
+            ">=",
+            "<="
+        ]
+
+        self.b = [
+            1,
+            4,
+            4,
+            1,
+            2.5
+        ]
+
+        self.c = [2.5, 4]
+
         self.max_min = "MAX"
 
     def printProblem(self):

@@ -1,5 +1,6 @@
-from Problem import ProblemFormulation
+from Problem import ProblemFormulation, printInfo
 from Simplex import simplexSolver
+from copy import deepcopy
 
 # Substitute equals constraints for 2 constraints of type "<=" and ">="
 def removeEqualsConstraints(mapConsts: dict, p: ProblemFormulation, oldProblem: ProblemFormulation):
@@ -17,28 +18,32 @@ def removeEqualsConstraints(mapConsts: dict, p: ProblemFormulation, oldProblem: 
 
     return p
 
-def generateBasicSolution(p: ProblemFormulation, n, m):
-    
-    artVars = [] # Set of Artificial Variables
+def generateBasicSolution(problem: ProblemFormulation, n, m):
+
+    p = deepcopy(problem)
+    artVars = [] # Set of Artificial Variables saving their indexes
 
     for j in range(m):
         if p.A[j][n+j] == -1:
             artVars.append(j)
 
+            # Extends the matrix with aritificial vars columns
             for i in range(m):
                 p.A[i] = p.A[i] + [1 if i == j else 0]
 
     p.max_min = "MIN"
-    p.c = [1 if j >= n+m else 0 for j in range(n+m+len(artVars))]
-    p.printProblem()
+    p.c = [1 if j >= n+m else 0 for j in range(n+m+len(artVars))] # Extends vector c
+    printInfo(p, "ARITIFICIAL PROBLEM")
+    # Set cost 0 to aritificial variables
     p.c = [c-sum(p.A[artVars[k]][j] for k in range(len(artVars))) for j, c in enumerate(p.c)]
 
-    print()
-    p.printProblem()
-
+    printInfo(p, "ZERO COST ARTIFICIAL VAR")
     p = simplexSolver(p)
 
+    printInfo(p, "ARTIFICIAL SOLVED")
+
     return p
+
 
 def toCanonicalForm(p: ProblemFormulation):
     n = len(p.c) # Number of variables
@@ -82,7 +87,32 @@ def toCanonicalForm(p: ProblemFormulation):
                 elif j == n+idx:
                     canonical.A[idx][j] = 1 if canonical.constraints[idx] == "<=" else -1
 
+    printInfo(canonical, "CANONICAL")
+
+    basic = None
     if ">=" in canonical.constraints:
-        canonical = generateBasicSolution(canonical, n, m+eqConsts)
+        basic = generateBasicSolution(canonical, n, m+eqConsts)
+
+        #TODO VERIFY IF PROBLEM IS INFEASIBLE
+
+        # Remove the artificial vars
+        canonical.A = [[basic.A[i][j] for j in range(n+m+eqConsts)] for i in range(m+eqConsts)]
+        canonical.b = basic.b
+
+        # If the amount of 0's in j-th column of A is equals to the number of constraints-1
+        # and the sum of j-th column of A is 1 then the j-th column is a basic column
+        # Obs.: This is a specific case, not al32ways this is true 
+        print()
+        for j in range(n+m+eqConsts):
+            if sum(1 for i in range(m+eqConsts) if canonical.A[i][j] == 0) == m+eqConsts-1 and \
+                sum(canonical.A[i][j] for i in range(m+eqConsts)) == 1:
+
+                    oneIndex = list(canonical.A[i][j] for i in range(m+eqConsts)).index(1)
+
+                    value = canonical.c[j]
+                    for jdx in range(n+m):
+                        canonical.c[jdx] -= value * canonical.A[oneIndex][jdx]
+    
+    printInfo(canonical, "NEW PROBLEM")
 
     return canonical

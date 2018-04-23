@@ -12,7 +12,7 @@ def simplexSolver(problem: ProblemFormulation):
 
     while c_min < 0:   
         k = p.c.index(c_min)
-        print("\n\n"+"ITER %d".center(146, "-") % iteration)
+        print("\n\n"+3*"\t"+" ITER %d ".center(100, "*") % iteration)
         print("min(%s) = %5.2f in col=%d" % (str(p.c), c_min, k))
         iteration += 1
 
@@ -33,7 +33,7 @@ def simplexSolver(problem: ProblemFormulation):
         print()
         for i in range(m):
             if i != r:
-                p.b[i] = p.b[i]-p.A[i][k]*p.b[r]
+                p.b[i] -= p.A[i][k]*p.b[r]
                 p.A[i] = [p.A[i][j]-p.A[i][k]*p.A[r][j] for j in range(n)]
 
         p.c = [p.c[j]-p.A[r][j]*p.c[k] for j in range(n)]  
@@ -41,5 +41,5 @@ def simplexSolver(problem: ProblemFormulation):
         p.printProblem()
 
         c_min = min(p.c)
-    
+
     return p
